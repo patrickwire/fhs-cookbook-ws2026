@@ -15,61 +15,46 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import at.fhs.cookbook.model.Recipe
-import at.fhs.cookbook.model.startRecipes
+import at.fhs.cookbook.CookBookState
 import at.fhs.cookbook.ui.theme.CookBookTheme
 
-// E11-Endstand: der Umbau — Scaffold hält die Zonen, der FAB blendet die Eingabe ein.
+// E12-Endstand: UI-Stockwerk — nur noch merken und anzeigen. Gleiches Verhalten, neue Ordnung.
 
 @Composable
 fun CookBookApp() {
-    val recipes = remember { startRecipes.toMutableStateList() }
-    var input by remember { mutableStateOf("") }
-    var nextId by remember { mutableStateOf(startRecipes.size + 1) }
-    var showInput by remember { mutableStateOf(false) }
+    val state = remember { CookBookState() }   // der Screen merkt sich die Instanz
 
     Scaffold(
         topBar = { CookBookTopBar() },
         floatingActionButton = {
-            FloatingActionButton(onClick = { showInput = true }) {
+            FloatingActionButton(onClick = { state.showInput = true }) {
                 Icon(Icons.Default.Add, contentDescription = "Rezept hinzufügen")
             }
         },
     ) { innerPadding ->
-        // innerPadding NICHT wegwerfen — sonst beginnt die Liste unter der App-Bar
         Column(Modifier.padding(innerPadding).padding(16.dp)) {
-            if (showInput) {   // bedingtes Anzeigen: UI folgt dem State
+            if (state.showInput) {
                 OutlinedTextField(
-                    value = input,
-                    onValueChange = { input = it },
+                    value = state.input,
+                    onValueChange = { state.input = it },
                     label = { Text("Neues Rezept") },
                 )
-                Button(
-                    onClick = {
-                        recipes.add(Recipe(nextId++, input))
-                        input = ""
-                        showInput = false
-                    },
-                    enabled = input.isNotBlank(),
-                ) { Text("Hinzufügen") }
+                Button(onClick = { state.addRecipe() }, enabled = state.canAdd) {
+                    Text("Hinzufügen")
+                }
             }
+            Text("${state.favoriteCount} Favoriten")   // berechnet, nie gespeichert
             LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                items(recipes, key = { it.id }) { recipe ->
+                items(state.recipes, key = { it.id }) { recipe ->
                     RecipeItem(
                         title = recipe.title,
                         favorite = recipe.favorite,
-                        onFavoriteClick = {
-                            recipes[recipes.indexOf(recipe)] = recipe.copy(favorite = !recipe.favorite)
-                        },
-                        onDelete = { recipes.remove(recipe) },
+                        onFavoriteClick = { state.toggleFavorite(recipe) },
+                        onDelete = { state.removeRecipe(recipe) },
                     )
                 }
             }
@@ -77,7 +62,6 @@ fun CookBookApp() {
     }
 }
 
-// Zwei Previews zeigen hell und dunkel gleichzeitig — der billigste Dark-Mode-Test.
 @Preview(showBackground = true)
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
