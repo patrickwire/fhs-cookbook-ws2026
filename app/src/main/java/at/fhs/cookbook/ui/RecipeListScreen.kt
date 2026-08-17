@@ -54,7 +54,8 @@ fun RecipeListScreen(
                 onValueChange = { viewModel.setInput(it) },
                 label = { Text("Neues Rezept") },
             )
-            Button(onClick = { viewModel.addRecipe() }, enabled = state.canAdd) {
+            // Erfolgs-Test der Einheit: Rezept anlegen → App beenden → neu starten → noch da.
+            Button(onClick = { viewModel.addRecipe(state.input, Category.MAIN) }, enabled = state.canAdd) {
                 Text("Hinzufügen")
             }
         }
@@ -73,7 +74,7 @@ fun RecipeListScreen(
                         recipe = recipe,   // die Karte bekommt jetzt das ganze Recipe
                         onClick = { onRecipeClick(recipe) },
                         onFavoriteClick = { viewModel.toggleFavorite(recipe) },
-                        onDelete = { viewModel.removeRecipe(recipe) },
+                        onDelete = { viewModel.deleteRecipe(recipe) },
                     )
                 }
             }

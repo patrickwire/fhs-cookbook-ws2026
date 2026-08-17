@@ -40,19 +40,63 @@ class RecipeViewModel : ViewModel() {
     fun setCategory(category: Category?) = _uiState.update { it.copy(category = category) }
     fun toggleOnlyFavorites() = _uiState.update { it.copy(onlyFavorites = !it.onlyFavorites) }
 
-    // Ab hier: heute noch LOKAL — ab E17 laufen diese drei über POST/PATCH/DELETE zum Server.
-    fun addRecipe() = _uiState.update { state ->
-        val nextId = (state.recipes.maxOfOrNull { it.id } ?: 0) + 1   // größte id + 1 — bis der Server sie vergibt (E17)
-        state.copy(recipes = state.recipes + Recipe(nextId, state.input), input = "", showInput = false)
+    // E17: Anlegen — der Server vergibt die id, seine Antwort ist die Wahrheit.
+    fun addRecipe(title: String, category: Category) {
+        val draft = Recipe(id = 0, title = title, category = category)  // id 0 = „noch keine"
+        _uiState.update { it.copy(input = "", showInput = false) }
+        viewModelScope.launch {
+            try {
+                val created = repository.addRecipe(draft)               // Antwort MIT echter id
+                _uiState.update { it.copy(recipes = it.recipes + created) }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(error = "Speichern fehlgeschlagen") }
+            }
+        }
     }
 
-    fun removeRecipe(recipe: Recipe) = _uiState.update { state ->
-        state.copy(recipes = state.recipes.filter { it.id != recipe.id })
+    // E17: Favorit per PATCH — noch pessimistisch (optimistisch wird es in E18)
+    fun toggleFavorite(recipe: Recipe) {
+        viewModelScope.launch {
+            try {
+                val updated = repository.setFavorite(recipe.id, !recipe.favorite)
+                _uiState.update { state ->
+                    state.copy(recipes = state.recipes.map {            // GENAU eins ersetzen
+                        if (it.id == updated.id) updated else it
+                    })
+                }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(error = "Ändern fehlgeschlagen") }
+            }
+        }
     }
 
-    fun toggleFavorite(recipe: Recipe) = _uiState.update { state ->
-        state.copy(recipes = state.recipes.map {
-            if (it.id == recipe.id) it.copy(favorite = !it.favorite) else it
-        })
+    // E17: Löschen — in der Übung ohne Vorlage geschrieben (filter statt map)
+    fun deleteRecipe(recipe: Recipe) {
+        viewModelScope.launch {
+            try {
+                repository.deleteRecipe(recipe.id)                      // 204 — nichts zu übernehmen
+                _uiState.update { state ->
+                    state.copy(recipes = state.recipes.filter { it.id != recipe.id })
+                }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(error = "Löschen fehlgeschlagen") }
+            }
+        }
+    }
+
+    // Stretch: Bearbeiten-Screen → PUT (Muster identisch zu toggleFavorite)
+    fun saveRecipe(edited: Recipe) {
+        viewModelScope.launch {
+            try {
+                val updated = repository.updateRecipe(edited)
+                _uiState.update { state ->
+                    state.copy(recipes = state.recipes.map {
+                        if (it.id == updated.id) updated else it
+                    })
+                }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(error = "Speichern fehlgeschlagen") }
+            }
+        }
     }
 }
