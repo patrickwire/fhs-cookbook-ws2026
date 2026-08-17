@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Card
@@ -23,9 +22,10 @@ import coil3.compose.AsyncImage
 import at.fhs.cookbook.model.Recipe
 
 // E16: die Karte bekommt jetzt das ganze Recipe — und ein Bild vom Server.
+// E18: das Löschen-Icon ist raus — die Swipe-Geste ersetzt es (zwei Löschwege verwirren).
 
 @Composable
-fun RecipeItem(recipe: Recipe, onClick: () -> Unit, onFavoriteClick: () -> Unit, onDelete: () -> Unit) {
+fun RecipeItem(recipe: Recipe, onClick: () -> Unit, onFavoriteClick: () -> Unit) {
     Card(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
         Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
             AsyncImage(
@@ -40,7 +40,6 @@ fun RecipeItem(recipe: Recipe, onClick: () -> Unit, onFavoriteClick: () -> Unit,
                     contentDescription = "Favorit",
                 )
             }
-            IconButton(onClick = onDelete) { Icon(Icons.Default.Delete, contentDescription = "Löschen") }
         }
     }
 }

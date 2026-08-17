@@ -54,32 +54,53 @@ class RecipeViewModel : ViewModel() {
         }
     }
 
-    // E17: Favorit per PATCH — noch pessimistisch (optimistisch wird es in E18)
+    // E18: optimistisch — 1. sofort anzeigen · 2. Server-Wahrheit · 3. Rollback
     fun toggleFavorite(recipe: Recipe) {
+        val optimistic = recipe.copy(favorite = !recipe.favorite)
+        _uiState.update { st ->                                       // 1. VOR dem launch:
+            st.copy(recipes = st.recipes.map {                        //    Herz füllt sich sofort
+                if (it.id == recipe.id) optimistic else it
+            })
+        }
         viewModelScope.launch {
             try {
-                val updated = repository.setFavorite(recipe.id, !recipe.favorite)
-                _uiState.update { state ->
-                    state.copy(recipes = state.recipes.map {            // GENAU eins ersetzen
+                val updated = repository.setFavorite(recipe.id, optimistic.favorite)
+                _uiState.update { st ->                               // 2. Server-Antwort
+                    st.copy(recipes = st.recipes.map {                //    übernehmen (E17-Regel)
                         if (it.id == updated.id) updated else it
                     })
                 }
             } catch (e: Exception) {
-                _uiState.update { it.copy(error = "Ändern fehlgeschlagen") }
+                _uiState.update { st ->                               // 3. ROLLBACK: das
+                    st.copy(                                          //    unveränderte Original
+                        recipes = st.recipes.map {                    //    aus dem Parameter
+                            if (it.id == recipe.id) recipe else it
+                        },
+                        error = "Ändern fehlgeschlagen",              //    … + Meldung.
+                    )                                                 //    Leise ja — stumm nie!
+                }
             }
         }
     }
 
-    // E17: Löschen — in der Übung ohne Vorlage geschrieben (filter statt map)
-    fun deleteRecipe(recipe: Recipe) {
+    // E18: die drei Teilschritte des Undo-Tanzes — keiner kennt die Snackbar;
+    // das WANN dirigiert die UI (rememberCoroutineScope).
+
+    fun removeLocally(recipe: Recipe) = _uiState.update {             // Karte raus — NUR UiState,
+        it.copy(recipes = it.recipes.filter { r -> r.id != recipe.id })   // der Server weiß nichts
+    }
+
+    fun restore(recipe: Recipe) = _uiState.update {                   // Reue: einfach zurücklegen —
+        it.copy(recipes = it.recipes + recipe)                        // es wurde ja nie gelöscht
+    }
+
+    fun confirmDelete(recipe: Recipe) {                               // Reue-Zeit um: JETZT löschen
         viewModelScope.launch {
             try {
-                repository.deleteRecipe(recipe.id)                      // 204 — nichts zu übernehmen
-                _uiState.update { state ->
-                    state.copy(recipes = state.recipes.filter { it.id != recipe.id })
-                }
+                repository.deleteRecipe(recipe.id)
             } catch (e: Exception) {
-                _uiState.update { it.copy(error = "Löschen fehlgeschlagen") }
+                restore(recipe)                                       // Rollback …
+                _uiState.update { it.copy(error = "Löschen fehlgeschlagen") }   // … + Meldung
             }
         }
     }

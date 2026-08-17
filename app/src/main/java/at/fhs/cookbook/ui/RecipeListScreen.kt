@@ -26,6 +26,7 @@ fun RecipeListScreen(
     state: RecipeUiState,
     viewModel: RecipeViewModel,
     onRecipeClick: (Recipe) -> Unit,   // Navigation ist Sache von CookBookApp — der Screen meldet nur
+    onDelete: (Recipe) -> Unit,        // E18: der Undo-Tanz wohnt in CookBookApp (Snackbar-Slot)
 ) {
     Column(Modifier.padding(16.dp)) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -69,12 +70,12 @@ fun RecipeListScreen(
             }
             state.recipes.isEmpty() -> Text("Noch keine Rezepte — leg das erste an!")   // Empty State (E10)
             else -> LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                items(state.visibleRecipes, key = { it.id }) { recipe ->
-                    RecipeItem(
-                        recipe = recipe,   // die Karte bekommt jetzt das ganze Recipe
+                items(state.visibleRecipes, key = { it.id }) { recipe ->   // key PFLICHT (E10):
+                    SwipeableRecipeItem(                                   // der Wisch-State klebt
+                        recipe = recipe,                                   // sonst an der falschen Karte
+                        onDelete = onDelete,
                         onClick = { onRecipeClick(recipe) },
                         onFavoriteClick = { viewModel.toggleFavorite(recipe) },
-                        onDelete = { viewModel.deleteRecipe(recipe) },
                     )
                 }
             }
