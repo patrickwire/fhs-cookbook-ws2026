@@ -1,5 +1,6 @@
 package at.fhs.cookbook.ui
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -49,17 +50,21 @@ fun RecipeListScreen(
             )
         }
 
-        if (state.showInput) {
-            OutlinedTextField(
+        AnimatedVisibility(visible = state.showInput) {   // E21: Auftritt mit Ansage
+            Column {
+                OutlinedTextField(
                 value = state.input,
                 onValueChange = { viewModel.setInput(it) },
                 label = { Text("Neues Rezept") },
             )
-            // Erfolgs-Test der Einheit: Rezept anlegen → App beenden → neu starten → noch da.
-            Button(onClick = { viewModel.addRecipe(state.input, Category.MAIN) }, enabled = state.canAdd) {
-                Text("Hinzufügen")
+                // Erfolgs-Test E17: Rezept anlegen → App beenden → neu starten → noch da.
+                Button(onClick = { viewModel.addRecipe(state.input, Category.MAIN) }, enabled = state.canAdd) {
+                    Text("Hinzufügen")
+                }
             }
         }
+
+        AnimatedErrorBanner(error = state.error)   // E21: Schreib-Fehler gleiten herein
 
         // Die vier Gesichter — Reihenfolge zählt: Laden → Fehler → Leer → Inhalt (sonst flackert es)
         when {
@@ -76,7 +81,8 @@ fun RecipeListScreen(
                         onDelete = onDelete,
                         onClick = { onRecipeClick(recipe) },
                         onFavoriteClick = { viewModel.toggleFavorite(recipe) },
-                    )
+                        modifier = Modifier.animateItem(),   // E21: erscheinen · verschwinden · GLEITEN
+                    )                                        // dritter Zahltag der Keys (E10 · E18 · E21)
                 }
             }
         }
