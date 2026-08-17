@@ -18,7 +18,12 @@ const val MY_KEY = "max-mustermann"                     // ← eigenen Schlüsse
 interface CookBookApi {                     // interface = nur Versprechen, keine Umsetzung
     @GET("cookbook.php")
     suspend fun scrandle(@Query("r") r: String = "scrandle"): ScrandlePair
-    // listRecipes / getRecipe kommen in E16 dazu
+
+    @GET("cookbook.php")                      // NEU in E16
+    suspend fun listRecipes(@Query("r") r: String = "recipes"): List<RecipeDto>
+
+    @GET("cookbook.php")                      // NEU in E16 — Block 5 braucht es
+    suspend fun getRecipe(@Query("id") id: Int, @Query("r") r: String = "recipes"): RecipeDto
 }
 
 // ---------- Aufbau ----------

@@ -12,15 +12,7 @@ data class Recipe(
     val favorite: Boolean = false,
     val ingredients: List<String> = emptyList(),   // NEU in E14 — Default bricht nichts
     val steps: List<String> = emptyList(),         // NEU in E14
+    val imageUrl: String? = null,                  // NEU in E16 — kommt vom Server
 )
 
-// Beispieldaten — ab E14 mit Zutaten/Schritten fürs Detail; gehen in E16 in Rente.
-val startRecipes = listOf(
-    Recipe(
-        1, "Kürbissuppe", Category.STARTER, 25, favorite = true,
-        ingredients = listOf("1 Hokkaido", "1 Zwiebel", "500 ml Gemüsebrühe"),
-        steps = listOf("Kürbis würfeln", "Anschwitzen und aufgießen", "Pürieren"),
-    ),
-    Recipe(2, "Salat", Category.STARTER, 10),
-    Recipe(3, "Curry", Category.MAIN, 40),
-)
+// startRecipes ist in Rente — die Rezepte kommen seit E16 vom Server.

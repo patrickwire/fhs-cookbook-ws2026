@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
@@ -15,36 +17,30 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
+import at.fhs.cookbook.model.Recipe
 
-// Die Karte aus E9, erweitert um onDelete.
+// E16: die Karte bekommt jetzt das ganze Recipe — und ein Bild vom Server.
 
 @Composable
-fun RecipeItem(
-    title: String,
-    favorite: Boolean,
-    onFavoriteClick: () -> Unit,
-    onDelete: () -> Unit,               // neu in E10: Löschen ist ein Event der Karte
-    onClick: () -> Unit = {},           // NEU in E14: Karte tippbar — Default hält alte Aufrufer am Leben
-) {
+fun RecipeItem(recipe: Recipe, onClick: () -> Unit, onFavoriteClick: () -> Unit, onDelete: () -> Unit) {
     Card(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
         Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
-            Column(Modifier.weight(1f)) { Text(title) }
+            AsyncImage(
+                model = recipe.imageUrl,               // fertige URL aus der Antwort (E15)
+                contentDescription = recipe.title,
+                modifier = Modifier.size(56.dp).clip(RoundedCornerShape(8.dp)),
+            )
+            Column(Modifier.weight(1f).padding(start = 12.dp)) { Text(recipe.title) }
             IconButton(onClick = onFavoriteClick) {
                 Icon(
-                    if (favorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                    if (recipe.favorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                     contentDescription = "Favorit",
                 )
             }
-            IconButton(onClick = onDelete) {
-                Icon(Icons.Default.Delete, contentDescription = "Löschen")
-            }
+            IconButton(onClick = onDelete) { Icon(Icons.Default.Delete, contentDescription = "Löschen") }
         }
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun RecipeItemPreview() =
-    RecipeItem("Kürbissuppe", favorite = false, onFavoriteClick = {}, onDelete = {})

@@ -3,16 +3,17 @@ package at.fhs.cookbook
 import at.fhs.cookbook.model.Category
 import at.fhs.cookbook.model.Recipe
 
-// E13: der komplette Bildschirm-Inhalt als EIN Wert.
+// E13 + E16: der komplette Bildschirm-Inhalt als EIN Wert — jetzt mit den zwei Netz-Feldern.
 
 data class RecipeUiState(
-    val recipes: List<Recipe> = emptyList(),   // alle Rezepte — die eine Quelle
-    val input: String = "",                    // Text im Eingabefeld
-    val showInput: Boolean = false,            // Eingabe sichtbar?
-    val category: Category? = null,            // aktiver Filter — null heißt: alle
-    val onlyFavorites: Boolean = false,        // nur ♥ zeigen?
+    val recipes: List<Recipe> = emptyList(),   // startet LEER — startRecipes ist in Rente
+    val input: String = "",
+    val showInput: Boolean = false,
+    val category: Category? = null,
+    val onlyFavorites: Boolean = false,
+    val isLoading: Boolean = false,            // NEU in E16 (Scrandle-Muster)
+    val error: String? = null,                 // NEU in E16
 ) {
-    // abgeleiteter State: bei jedem Zugriff frisch berechnet — nie gespeichert (E12)
     val visibleRecipes: List<Recipe>
         get() {
             var result = recipes

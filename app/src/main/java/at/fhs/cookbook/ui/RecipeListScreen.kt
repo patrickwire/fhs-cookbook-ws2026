@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -58,15 +59,23 @@ fun RecipeListScreen(
             }
         }
 
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            items(state.visibleRecipes, key = { it.id }) { recipe ->
-                RecipeItem(
-                    title = recipe.title,
-                    favorite = recipe.favorite,
-                    onFavoriteClick = { viewModel.toggleFavorite(recipe) },
-                    onDelete = { viewModel.removeRecipe(recipe) },
-                    onClick = { onRecipeClick(recipe) },   // NEU in E14: die Karte ist tippbar
-                )
+        // Die vier Gesichter — Reihenfolge zählt: Laden → Fehler → Leer → Inhalt (sonst flackert es)
+        when {
+            state.isLoading -> CircularProgressIndicator()
+            state.error != null -> {
+                Text(state.error ?: "")
+                Button(onClick = { viewModel.loadRecipes() }) { Text("Nochmal versuchen") }
+            }
+            state.recipes.isEmpty() -> Text("Noch keine Rezepte — leg das erste an!")   // Empty State (E10)
+            else -> LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                items(state.visibleRecipes, key = { it.id }) { recipe ->
+                    RecipeItem(
+                        recipe = recipe,   // die Karte bekommt jetzt das ganze Recipe
+                        onClick = { onRecipeClick(recipe) },
+                        onFavoriteClick = { viewModel.toggleFavorite(recipe) },
+                        onDelete = { viewModel.removeRecipe(recipe) },
+                    )
+                }
             }
         }
     }
