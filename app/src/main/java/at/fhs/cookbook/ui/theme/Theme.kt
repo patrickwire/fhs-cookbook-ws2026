@@ -6,13 +6,13 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 
-// Assistenten-Stand: Material-3-Standardfarben. Das eigene Designsystem kommt in E11 (Theme Builder, E6).
-private val lightScheme = lightColorScheme()
+// E11: Platzhalter-Schemata — euer Theme-Builder-Export (Color.kt/Theme.kt aus E6) ersetzt das.
+private val lightScheme = lightColorScheme()   // im Export: eure Rollen aus der Seed Color
 private val darkScheme = darkColorScheme()
 
 @Composable
 fun CookBookTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    darkTheme: Boolean = isSystemInDarkTheme(),   // liest die Systemeinstellung
     content: @Composable () -> Unit,
 ) {
     val scheme = if (darkTheme) darkScheme else lightScheme

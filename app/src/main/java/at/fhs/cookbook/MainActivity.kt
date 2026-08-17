@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import at.fhs.cookbook.ui.CookBookScreen
+import at.fhs.cookbook.ui.CookBookApp
 import at.fhs.cookbook.ui.theme.CookBookTheme
 
 class MainActivity : ComponentActivity() {
@@ -14,7 +14,7 @@ class MainActivity : ComponentActivity() {
         Log.d("LIFECYCLE", "onCreate")      // Logcat-Filter: LIFECYCLE
         setContent {
             CookBookTheme {
-                CookBookScreen()
+                CookBookApp()
             }
         }
     }
