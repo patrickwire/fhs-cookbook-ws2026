@@ -17,7 +17,7 @@ data class RecipeUiState(
     val visibleRecipes: List<Recipe>
         get() {
             var result = recipes
-            if (category != null) result = result.filter { it.category == category }
+            if (category != null) result = result.filter { it.category != category }
             if (onlyFavorites) result = result.filter { it.favorite }
             return result
         }
