@@ -5,8 +5,11 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
+import okhttp3.MultipartBody
 import retrofit2.http.Body
 import retrofit2.http.DELETE
+import retrofit2.http.Multipart
+import retrofit2.http.Part
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
@@ -44,6 +47,14 @@ interface CookBookApi {                     // interface = nur Versprechen, kein
 
     @DELETE("cookbook.php")                   // E17 · Antwort 204: kein Body → kein Rückgabetyp!
     suspend fun deleteRecipe(@Query("id") id: Int, @Query("r") r: String = "recipes")
+
+    @Multipart                                // E19 · Multipart statt JSON (Datei!)
+    @POST("cookbook.php")
+    suspend fun uploadImage(
+        @Query("id") id: Int,
+        @Part photo: MultipartBody.Part,      // das Abteil heißt „photo" — so will es die API
+        @Query("r") r: String = "recipe_image",
+    )
 }
 
 // ---------- Aufbau ----------

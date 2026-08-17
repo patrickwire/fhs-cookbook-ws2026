@@ -87,7 +87,13 @@ fun CookBookApp(viewModel: RecipeViewModel = viewModel()) {
                 if (recipe == null) {
                     Text("Rezept nicht gefunden")   // Null-Fall sichtbar behandeln (E2)
                 } else {
-                    RecipeDetailScreen(recipe = recipe)
+                    RecipeDetailScreen(
+                        recipe = recipe,
+                        onPhotoTaken = { file -> viewModel.attachPhoto(recipe.id, file) },
+                        onDenied = {
+                            scope.launch { snackbarHostState.showSnackbar("Ohne Kamera geht es auch — Galerie kommt als Stretch.") }
+                        },
+                    )
                 }
             }
             composable<ScrandleRoute> { ScrandleScreen() }   // E15 zahlt direkt ein

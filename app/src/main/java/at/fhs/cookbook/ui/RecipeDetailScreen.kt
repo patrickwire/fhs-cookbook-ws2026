@@ -17,13 +17,18 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import at.fhs.cookbook.model.Recipe
+import java.io.File
 
 // E14: Detail-Screen — nur Column + Texte, E7/E8-Handwerk.
 // Stretch (Zurück-Pfeil): der App-Bar ein navigationIcon geben — IconButton mit
 // Icons.AutoMirrored.Filled.ArrowBack und onClick = { navController.navigateUp() }.
 
 @Composable
-fun RecipeDetailScreen(recipe: Recipe) {
+fun RecipeDetailScreen(
+    recipe: Recipe,
+    onPhotoTaken: (File) -> Unit = {},   // E19 → viewModel.attachPhoto(recipe.id, file)
+    onDenied: () -> Unit = {},           // E19 → Snackbar: freundlich ohne Kamera
+) {
     Column(
         Modifier
             .padding(16.dp)
@@ -45,5 +50,7 @@ fun RecipeDetailScreen(recipe: Recipe) {
         Text("Zubereitung", style = MaterialTheme.typography.titleMedium)
         // forEachIndexed = forEach mit mitlaufender Nummer (ab 0) — die Übungs-Lücke:
         recipe.steps.forEachIndexed { i, step -> Text("${i + 1}. $step") }
+
+        TakePhotoButton(recipe = recipe, onPhotoTaken = onPhotoTaken, onDenied = onDenied)   // E19
     }
 }

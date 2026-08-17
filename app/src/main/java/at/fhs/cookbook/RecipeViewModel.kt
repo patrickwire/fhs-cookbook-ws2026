@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.io.File
 
 // E16: lädt beim Start übers Repository — die Filter aus E13 laufen einfach weiter.
 
@@ -101,6 +102,23 @@ class RecipeViewModel : ViewModel() {
             } catch (e: Exception) {
                 restore(recipe)                                       // Rollback …
                 _uiState.update { it.copy(error = "Löschen fehlgeschlagen") }   // … + Meldung
+            }
+        }
+    }
+
+    // E19: Foto anhängen — das E17-Muster, kein neuer Gedanke. Pessimistisch, bewusst:
+    // die App KENNT das Ergebnis (die Server-URL) nicht vorher — E18-Kriterium greift nicht.
+    fun attachPhoto(id: Int, file: File) {
+        viewModelScope.launch {
+            try {
+                val updated = repository.uploadPhoto(id, file)
+                _uiState.update { st ->
+                    st.copy(recipes = st.recipes.map {         // das eine Rezept ersetzen —
+                        if (it.id == updated.id) updated else it   // die map-Figur aus E17
+                    })
+                }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(error = "Foto-Upload fehlgeschlagen") }
             }
         }
     }

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!-- E19: WELCHER Ordner wird unter WELCHEM Namen freigegeben -->
+    <cache-path name="images" path="." />
+</paths>
