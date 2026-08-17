@@ -1,11 +1,8 @@
 package at.fhs.cookbook.ui
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 
@@ -13,11 +10,9 @@ import androidx.compose.runtime.Composable
 
 @OptIn(ExperimentalMaterial3Api::class)   // bewusste Nutzung einer noch änderbaren API
 @Composable
-fun CookBookTopBar() {
+fun CookBookTopBar(onScrandleClick: () -> Unit = {}) {
     TopAppBar(
         title = { Text("CookBook") },
-        actions = {   // Stretch: Such-Action, noch ohne Funktion
-            IconButton(onClick = { }) { Icon(Icons.Default.Search, contentDescription = "Suchen") }
-        },
+        actions = { TextButton(onClick = onScrandleClick) { Text("Scrandle") } },   // E15: Zugang zum Spiel
     )
 }

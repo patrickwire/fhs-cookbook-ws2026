@@ -21,6 +21,8 @@ import androidx.navigation.toRoute
 import at.fhs.cookbook.RecipeViewModel
 import at.fhs.cookbook.navigation.RecipeDetailRoute
 import at.fhs.cookbook.navigation.RecipeListRoute
+import at.fhs.cookbook.scrandle.ScrandleRoute
+import at.fhs.cookbook.scrandle.ScrandleScreen
 import at.fhs.cookbook.ui.theme.CookBookTheme
 
 // E14-Endstand: CookBookApp besitzt ViewModel + NavController und verteilt an die Szenen.
@@ -31,7 +33,7 @@ fun CookBookApp(viewModel: RecipeViewModel = viewModel()) {
     val navController = rememberNavController()   // der Regisseur — per remember gemerkt
 
     Scaffold(
-        topBar = { CookBookTopBar() },
+        topBar = { CookBookTopBar(onScrandleClick = { navController.navigate(ScrandleRoute) }) },
         floatingActionButton = {   // FAB bleibt vorerst auf jedem Screen — Feinschliff später
             FloatingActionButton(onClick = { viewModel.setShowInput(true) }) {
                 Icon(Icons.Default.Add, contentDescription = "Rezept hinzufügen")
@@ -59,6 +61,7 @@ fun CookBookApp(viewModel: RecipeViewModel = viewModel()) {
                     RecipeDetailScreen(recipe = recipe)
                 }
             }
+            composable<ScrandleRoute> { ScrandleScreen() }   // E15 zahlt direkt ein
         }
     }
 }
