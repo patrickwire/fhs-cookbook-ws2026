@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Card
@@ -17,13 +18,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
-// E9: die Karte aus E8 wird interaktiv — per State Hoisting bleibt sie „dumm".
+// Die Karte aus E9, erweitert um onDelete.
 
 @Composable
 fun RecipeItem(
     title: String,
-    favorite: Boolean,             // Wert kommt rein …
-    onFavoriteClick: () -> Unit,   // … Ereignis geht raus (State Hoisting)
+    favorite: Boolean,
+    onFavoriteClick: () -> Unit,
+    onDelete: () -> Unit,               // neu in E10: Löschen ist ein Event der Karte
 ) {
     Card(Modifier.fillMaxWidth()) {
         Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -34,15 +36,14 @@ fun RecipeItem(
                     contentDescription = "Favorit",
                 )
             }
+            IconButton(onClick = onDelete) {
+                Icon(Icons.Default.Delete, contentDescription = "Löschen")
+            }
         }
     }
 }
 
-// Zwei Previews: die stateless Karte kann beide Varianten zeigen — ohne Klick.
 @Preview(showBackground = true)
 @Composable
-fun RecipeItemPreview() = RecipeItem("Kürbissuppe", favorite = false, onFavoriteClick = {})
-
-@Preview(showBackground = true)
-@Composable
-fun RecipeItemFavoritePreview() = RecipeItem("Kürbissuppe", favorite = true, onFavoriteClick = {})
+fun RecipeItemPreview() =
+    RecipeItem("Kürbissuppe", favorite = false, onFavoriteClick = {}, onDelete = {})
