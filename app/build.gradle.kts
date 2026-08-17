@@ -37,5 +37,9 @@ dependencies {
     implementation(libs.compose.material.icons.core)   // Icons.Default.* — BOM zieht sie nicht transitiv
     debugImplementation(libs.compose.ui.tooling)
 
+    // Block 4 (E13): ViewModel + collectAsStateWithLifecycle
+    implementation(libs.lifecycle.viewmodel.compose)
+    implementation(libs.lifecycle.runtime.compose)
+
     testImplementation(libs.junit)
 }
