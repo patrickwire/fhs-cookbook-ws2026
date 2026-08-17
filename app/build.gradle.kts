@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)   // Block 4 (E14): @Serializable-Routen
 }
 
 android {
@@ -40,6 +41,10 @@ dependencies {
     // Block 4 (E13): ViewModel + collectAsStateWithLifecycle
     implementation(libs.lifecycle.viewmodel.compose)
     implementation(libs.lifecycle.runtime.compose)
+
+    // Block 4 (E14): typsichere Navigation
+    implementation(libs.navigation.compose)
+    implementation(libs.kotlinx.serialization.json)
 
     testImplementation(libs.junit)
 }

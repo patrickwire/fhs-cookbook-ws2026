@@ -26,8 +26,9 @@ fun RecipeItem(
     favorite: Boolean,
     onFavoriteClick: () -> Unit,
     onDelete: () -> Unit,               // neu in E10: Löschen ist ein Event der Karte
+    onClick: () -> Unit = {},           // NEU in E14: Karte tippbar — Default hält alte Aufrufer am Leben
 ) {
-    Card(Modifier.fillMaxWidth()) {
+    Card(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
         Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f)) { Text(title) }
             IconButton(onClick = onFavoriteClick) {
