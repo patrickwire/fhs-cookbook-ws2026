@@ -2,6 +2,7 @@ package at.fhs.cookbook
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import at.fhs.cookbook.data.NetworkRecipeRepository
 import at.fhs.cookbook.data.RecipeRepository
 import at.fhs.cookbook.data.api
 import at.fhs.cookbook.model.Category
@@ -15,9 +16,9 @@ import java.io.File
 
 // E16: lädt beim Start übers Repository — die Filter aus E13 laufen einfach weiter.
 
-class RecipeViewModel : ViewModel() {
-
-    private val repository = RecipeRepository(api)   // die Tür — von Hand eingebaut
+class RecipeViewModel(
+    private val repository: RecipeRepository = NetworkRecipeRepository(api)   // E20: Default-Parameter —
+) : ViewModel() {                                                             // App-Code bleibt gleich
 
     private val _uiState = MutableStateFlow(RecipeUiState())
     val uiState: StateFlow<RecipeUiState> = _uiState.asStateFlow()
