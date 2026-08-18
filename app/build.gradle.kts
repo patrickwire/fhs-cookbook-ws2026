@@ -1,13 +1,12 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)   // Block 4 (E14): @Serializable-Routen
 }
 
 android {
     namespace = "at.fhs.cookbook"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "at.fhs.cookbook"
