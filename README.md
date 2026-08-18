@@ -26,6 +26,5 @@ Versionen sind zentral in `gradle/libs.versions.toml` gepinnt — **bitte keine 
 
 Vor E15: in `app/src/main/java/at/fhs/cookbook/data/Net.kt` den eigenen `MY_KEY` setzen — und dann nie wieder wechseln.
 
-> Hinweis (Stand 2026-08-16): Diese Stände sind aus den geprüften Kurs-Codebeispielen
-> zusammengesetzt; der Compile-Test des Gesamt-Repos in Android Studio steht noch aus
-> (E9–E12-Kern getestet am 2026-07-29; Vermerk entfernen, sobald alle Stände gebaut sind).
+> Stand 2026-08-18: Alle Branches kompiliert (`assembleDebug`, Gradle 9.4.1 / AGP 9.2.0 / JDK 17),
+> Unit-Tests auf `main` grün.
