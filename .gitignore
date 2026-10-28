@@ -1,14 +1,10 @@
-*.iml
 .gradle/
-/local.properties
+.kotlin/
 .idea/
+**/build/
+local.properties
+*.iml
 .DS_Store
-/build
-/app/build
-/captures
-.externalNativeBuild
-.cxx
-# Geheimnisse & Schlüssel — NIE ins Repo (E22!)
 *.jks
 *.keystore
-keystore.properties
+captures/
